@@ -134,54 +134,8 @@ add_shortcode('loteria_comprobador', function() {
     <?php return ob_get_clean();
 });
 
-// Shortcode 3: Buscar Número
-add_shortcode('loteria_buscar', function() {
-    $uid = 'lot_' . md5(uniqid(rand(), true));
-    // USAMOS ENDPOINT DE STOCK (BUSQUEDA) HASTA EL DIA DEL SORTEO
-    $api = loteria_navidad_get_api_v5('busqueda');
-
-    ob_start();
-    ?>
-    <div class="loteria-widget loteria-buscar" data-api="<?php echo esc_attr($api); ?>" id="<?php echo $uid; ?>" style="margin:40px 0;font-family:Arial,sans-serif;clear:both;min-height:100px;">
-        <div style="text-align:center;margin-bottom:30px;">
-            <h2 style="font-size:2rem;color:#1a1a1a;">Buscar Número</h2>
-            <p style="color:#666;">Descubre dónde se vende tu número favorito</p>
-            <button class="loteria-btn-reload" style="background:#FFE032;border:none;color:black;padding:8px 16px;border-radius:8px;cursor:pointer;margin-top:10px;font-weight:600;">🔄 Actualizar</button>
-        </div>
-        <div style="background:#fff;border-radius:8px;box-shadow:0 4px 6px rgba(0,0,0,0.1);padding:30px;border-top:4px solid #FFE032;">
-            <form class="loteria-form-search" style="display:flex;gap:15px;justify-content:center;margin-bottom:20px;">
-                <input type="text" name="num" maxlength="5" placeholder="00000" style="flex:1;max-width:200px;padding:12px;border:1px solid #ddd;border-radius:8px;" required>
-                <button type="submit" style="background:#FFE032;color:black;border:none;padding:12px 24px;border-radius:8px;font-weight:600;cursor:pointer;">Buscar</button>
-            </form>
-            <div class="loteria-result"></div>
-        </div>
-    </div>
-    <?php return ob_get_clean();
-});
-
-// Shortcode 4: Administraciones Premiadas
-add_shortcode('loteria_admin_premiadas', function() {
-    $uid = 'lot_' . md5(uniqid(rand(), true));
-    $api = loteria_navidad_get_api_v5('repartido');
-
-    ob_start();
-    ?>
-    <div class="loteria-widget loteria-admin-premiadas" data-api="<?php echo esc_attr($api); ?>" id="<?php echo $uid; ?>" style="margin:40px 0;font-family:Arial,sans-serif;clear:both;min-height:100px;">
-        <div style="text-align:center;margin-bottom:30px;">
-            <h2 style="font-size:2rem;color:#1a1a1a;">Administraciones Premiadas</h2>
-            <p style="color:#666;">Administraciones que han vendido números premiados</p>
-        </div>
-        <div style="background:#fff;border-radius:8px;box-shadow:0 4px 6px rgba(0,0,0,0.1);padding:30px;border-top:4px solid #FFE032;">
-            <select class="loteria-prov-select" style="width:100%;padding:12px;border:1px solid #ddd;border-radius:8px;margin-bottom:20px;">
-                <option value="">Selecciona una provincia...</option>
-            </select>
-            <div class="loteria-list" style="max-height:500px;overflow-y:auto;">
-                <p style="text-align:center;color:#666;padding:40px;">Cargando datos...</p>
-            </div>
-        </div>
-    </div>
-    <?php return ob_get_clean();
-});
+// Shortcode 3: [ELIMINADO] Buscar Número
+// Shortcode 4: [ELIMINADO] Administraciones Premiadas
 
 // Shortcode 5: Buscador Administraciones
 add_shortcode('loteria_buscador_admin', function() {
@@ -323,85 +277,7 @@ add_action('wp_footer', function() {
             });
         });
 
-        // 3. BUSCAR NUMERO
-        document.querySelectorAll('.loteria-buscar').forEach(w => {
-            const api = w.dataset.api;
-            const res = w.querySelector('.loteria-result');
-            w.querySelector('.loteria-btn-reload').onclick = () => location.reload();
-
-            w.querySelector('form').addEventListener('submit', function(e) {
-                e.preventDefault();
-                const num = this.querySelector('[name=num]').value.padStart(5,'0');
-                res.innerHTML = '<p style="text-align:center;">Buscando disponibilidad...</p>';
-
-                // Añadir num a la query si usamos el endpoint de busqueda
-                let fetchUrl = api;
-                if(api.includes('busqueda')) {
-                    fetchUrl += (fetchUrl.includes('?') ? '&' : '?') + 'num=' + num;
-                }
-
-                fetch(fetchUrl).then(r=>{
-                    if(!r.ok) throw new Error(`API Error ${r.status}`);
-                    return r.json();
-                }).then(d => {
-                    // Si falla silenciosamente (vacío)
-                    if(Object.keys(d).length === 0) {
-                        res.innerHTML = '<p style="text-align:center;">Sin resultados o conexión.</p>';
-                        return;
-                    }
-
-                    let h = '';
-                    let found = false;
-
-                    // CASO 1: Respuesta STOCK (Objeto con claves "0", "1"...)
-                    // La API de busqueda devuelve un objeto donde las claves son índices
-                    if (d.total !== undefined || d['0']) {
-                        const total = d.total || Object.keys(d).filter(k=>!isNaN(k)).length;
-                        if(total == 0 || d.error == 1) {
-                             res.innerHTML = '<p style="text-align:center;">No disponible en terminales.</p>';
-                             return;
-                        }
-                        
-                        h += `<div style="padding:10px;background:#f0f7ff;margin-bottom:10px;text-align:center;">Disponible en <strong>${total}</strong> puntos de venta</div>`;
-                        
-                        // Iterar claves numéricas
-                        Object.keys(d).forEach(k => {
-                            if(!isNaN(k) && typeof d[k] === 'object') {
-                                const pv = d[k];
-                                h += `<div style="padding:15px;border-bottom:1px solid #e0e0e0;">
-                                    <strong>${pv.nombreComercial || 'Administración'}</strong><br>
-                                    <small>${pv.direccionCompleta || (pv.direccion + ', ' + pv.poblacion)}</small><br>
-                                    ${pv.telefono ? `<span style="font-size:0.9em;color:#666;">📞 ${pv.telefono}</span>` : ''}
-                                </div>`;
-                                found = true;
-                            }
-                        });
-                    }
-                    // CASO 2: Respuesta PREMIOS (Array de objetos) - Para el día 22
-                    else if(Array.isArray(d)) {
-                         const entry = d.find(i => i.decimo == num);
-                         if(entry && entry.repartidoEn) {
-                            entry.repartidoEn.forEach(a => {
-                                h += `<div style="padding:15px;border-bottom:1px solid #e0e0e0;"><strong>${a.nombre_comercial}</strong><br><small>${a.direccion}, ${a.poblacion}</small></div>`;
-                            });
-                            found = true;
-                         }
-                    }
-
-                    if(found) {
-                        res.innerHTML = h;
-                    } else {
-                        res.innerHTML = `<p style="text-align:center;">No encontrado.</p>`;
-                    }
-
-                }).catch(e => {
-                    console.error(e);
-                    res.innerHTML = `<p style="color:red;">Error: ${e.message}</p>`;
-                });
-            });
-        });
-
-        // 4 & 5. ADMINS (Shared Data Logic)
+        // 5. ADMINS (Shared Data Logic)
         const loadAdmins = (w, type) => {
             const api = w.dataset.api;
             const sel = w.querySelector('select');
@@ -434,18 +310,6 @@ add_action('wp_footer', function() {
                     sel.appendChild(opt);
                 });
 
-                // Logic for "Premiadas" (List by Province)
-                if(type === 'premiadas') {
-                    list.innerHTML = '<p style="text-align:center;padding:40px;color:#666;">Selecciona una provincia.</p>';
-                    sel.onchange = function() {
-                        if(!this.value) return;
-                        const f = admins.filter(a => a.provincia === this.value);
-                        let h = `<h3>${this.value}</h3>`;
-                        f.forEach(a => h += `<div style="padding:10px;border-bottom:1px solid #eee;"><strong>${a.nombre_comercial}</strong><br><small>${a.direccion}, ${a.poblacion}</small></div>`);
-                        list.innerHTML = h;
-                    };
-                }
-
                 // Logic for "Buscador" (Filter input)
                 if(type === 'buscador') {
                     const input = w.querySelector('input');
@@ -470,7 +334,6 @@ add_action('wp_footer', function() {
             });
         };
 
-        document.querySelectorAll('.loteria-admin-premiadas').forEach(w => loadAdmins(w, 'premiadas'));
         document.querySelectorAll('.loteria-buscador-admin').forEach(w => loadAdmins(w, 'buscador'));
 
     });
