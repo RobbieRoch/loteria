@@ -18,7 +18,7 @@ add_action('init', function() {
 
 // 1. API PROXY SETUP (V5)
 if (!defined('LOTERIA_ID_SORTEO_V5')) {
-    define('LOTERIA_ID_SORTEO_V5', '1259409103');
+    define('LOTERIA_ID_SORTEO_V5', '1295909102');
 }
 
 add_action('rest_api_init', function () {
@@ -44,19 +44,15 @@ function loteria_navidad_proxy_handler_v5($request) {
     $cached = get_transient($cache_key);
     if ($cached) return rest_ensure_response(json_decode($cached));
 
+    $referer = 'https://theobjective.com/';
     $response = wp_remote_get($endpoints[$type], [
-        'timeout' => 10,
+        'timeout' => 15,
+        'sslverify' => false,
         'headers' => [
-            'User-Agent' => 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
-            'Accept' => 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7',
-            'Accept-Language' => 'es-ES,es;q=0.9',
-            'Referer' => 'https://www.loteriasyapuestas.es/',
-            'Connection' => 'keep-alive',
-            'Upgrade-Insecure-Requests' => '1',
-            'Sec-Fetch-Dest' => 'document',
-            'Sec-Fetch-Mode' => 'navigate',
-            'Sec-Fetch-Site' => 'none',
-            'Sec-Fetch-User' => '?1'
+            'User-Agent' => 'selae_medio_TheObjective',
+            'Accept' => 'application/json, text/javascript, */*; q=0.01',
+            'Referer' => $referer,
+            'Cache-Control' => 'no-cache'
         ]
     ]);
     if (is_wp_error($response)) return new WP_Error('api_error', $response->get_error_message(), ['status' => 500]);
@@ -101,9 +97,9 @@ add_shortcode('loteria_premios', function() {
         <div style="text-align:center;margin-bottom:30px;">
             <h2 style="font-size:2rem;color:#1a1a1a;">Premios Principales</h2>
             <p style="color:#666;">Resultados del Sorteo de Navidad 2025</p>
-            <button class="loteria-btn-reload" style="background:#fff;border:1px solid #c5a059;color:#c5a059;padding:8px 16px;border-radius:8px;cursor:pointer;margin-top:10px;">🔄 Actualizar</button>
+            <button class="loteria-btn-reload" style="background:#fff;border:1px solid #FFE032;color:#FFE032;padding:8px 16px;border-radius:8px;cursor:pointer;margin-top:10px;">🔄 Actualizar</button>
         </div>
-        <div class="loteria-content" style="background:#fff;border-radius:8px;box-shadow:0 4px 6px rgba(0,0,0,0.1);padding:30px;border-top:4px solid #c5a059;">
+        <div class="loteria-content" style="background:#fff;border-radius:8px;box-shadow:0 4px 6px rgba(0,0,0,0.1);padding:30px;border-top:4px solid #FFE032;">
             <div class="loteria-loading">Cargando premios...</div>
         </div>
     </div>
@@ -121,9 +117,9 @@ add_shortcode('loteria_comprobador', function() {
         <div style="text-align:center;margin-bottom:30px;">
             <h2 style="font-size:2rem;color:#1a1a1a;">Comprobar Lotería</h2>
             <p style="color:#666;">Introduce tu número y el importe jugado</p>
-            <button class="loteria-btn-reload" style="background:#fff;border:1px solid #c5a059;color:#c5a059;padding:8px 16px;border-radius:8px;cursor:pointer;margin-top:10px;">🔄 Actualizar</button>
+            <button class="loteria-btn-reload" style="background:#fff;border:1px solid #FFE032;color:#FFE032;padding:8px 16px;border-radius:8px;cursor:pointer;margin-top:10px;">🔄 Actualizar</button>
         </div>
-        <div style="background:#fff;border-radius:8px;box-shadow:0 4px 6px rgba(0,0,0,0.1);padding:30px;border-top:4px solid #c5a059;">
+        <div style="background:#fff;border-radius:8px;box-shadow:0 4px 6px rgba(0,0,0,0.1);padding:30px;border-top:4px solid #FFE032;">
             <form class="loteria-form-check" style="display:flex;gap:15px;justify-content:center;flex-wrap:wrap;margin-bottom:20px;">
                 <div><label style="display:block;margin-bottom:5px;font-weight:600;">Número</label>
                     <input type="text" name="num" maxlength="5" placeholder="00000" style="padding:12px;border:1px solid #ddd;border-radius:8px;" required>
@@ -132,7 +128,7 @@ add_shortcode('loteria_comprobador', function() {
                     <input type="number" name="amt" value="20" min="1" style="padding:12px;border:1px solid #ddd;border-radius:8px;" required>
                 </div>
                 <div style="display:flex;align-items:flex-end;">
-                    <button type="submit" style="background:#c5a059;color:white;border:none;padding:12px 24px;border-radius:8px;font-weight:600;cursor:pointer;">Comprobar</button>
+                    <button type="submit" style="background:#FFE032;color:black;border:none;padding:12px 24px;border-radius:8px;font-weight:600;cursor:pointer;">Comprobar</button>
                 </div>
             </form>
             <div class="loteria-result"></div>
@@ -152,12 +148,12 @@ add_shortcode('loteria_buscar', function() {
         <div style="text-align:center;margin-bottom:30px;">
             <h2 style="font-size:2rem;color:#1a1a1a;">Buscar Número</h2>
             <p style="color:#666;">Descubre dónde se vende tu número favorito</p>
-            <button class="loteria-btn-reload" style="background:#fff;border:1px solid #c5a059;color:#c5a059;padding:8px 16px;border-radius:8px;cursor:pointer;margin-top:10px;">🔄 Actualizar</button>
+            <button class="loteria-btn-reload" style="background:#fff;border:1px solid #FFE032;color:#FFE032;padding:8px 16px;border-radius:8px;cursor:pointer;margin-top:10px;">🔄 Actualizar</button>
         </div>
-        <div style="background:#fff;border-radius:8px;box-shadow:0 4px 6px rgba(0,0,0,0.1);padding:30px;border-top:4px solid #c5a059;">
+        <div style="background:#fff;border-radius:8px;box-shadow:0 4px 6px rgba(0,0,0,0.1);padding:30px;border-top:4px solid #FFE032;">
             <form class="loteria-form-search" style="display:flex;gap:15px;justify-content:center;margin-bottom:20px;">
                 <input type="text" name="num" maxlength="5" placeholder="00000" style="flex:1;max-width:200px;padding:12px;border:1px solid #ddd;border-radius:8px;" required>
-                <button type="submit" style="background:#c5a059;color:white;border:none;padding:12px 24px;border-radius:8px;font-weight:600;cursor:pointer;">Buscar</button>
+                <button type="submit" style="background:#FFE032;color:black;border:none;padding:12px 24px;border-radius:8px;font-weight:600;cursor:pointer;">Buscar</button>
             </form>
             <div class="loteria-result"></div>
         </div>
@@ -177,7 +173,7 @@ add_shortcode('loteria_admin_premiadas', function() {
             <h2 style="font-size:2rem;color:#1a1a1a;">Administraciones Premiadas</h2>
             <p style="color:#666;">Administraciones que han vendido números premiados</p>
         </div>
-        <div style="background:#fff;border-radius:8px;box-shadow:0 4px 6px rgba(0,0,0,0.1);padding:30px;border-top:4px solid #c5a059;">
+        <div style="background:#fff;border-radius:8px;box-shadow:0 4px 6px rgba(0,0,0,0.1);padding:30px;border-top:4px solid #FFE032;">
             <select class="loteria-prov-select" style="width:100%;padding:12px;border:1px solid #ddd;border-radius:8px;margin-bottom:20px;">
                 <option value="">Selecciona una provincia...</option>
             </select>
@@ -201,10 +197,10 @@ add_shortcode('loteria_buscador_admin', function() {
             <h2 style="font-size:2rem;color:#1a1a1a;">Buscador de Administraciones</h2>
             <p style="color:#666;">Encuentra dónde comprar lotería en toda España</p>
         </div>
-        <div style="background:#fff;border-radius:8px;box-shadow:0 4px 6px rgba(0,0,0,0.1);padding:30px;border-top:4px solid #c5a059;">
+        <div style="background:#fff;border-radius:8px;box-shadow:0 4px 6px rgba(0,0,0,0.1);padding:30px;border-top:4px solid #FFE032;">
             <div style="display:flex;gap:10px;margin-bottom:15px;">
                 <input type="text" class="loteria-input-search" placeholder="Buscar por nombre, localidad..." style="flex:1;padding:12px;border:1px solid #ddd;border-radius:8px;">
-                <button class="loteria-btn-search" style="background:#c5a059;color:white;border:none;padding:12px 24px;border-radius:8px;font-weight:600;cursor:pointer;">Buscar</button>
+                <button class="loteria-btn-search" style="background:#FFE032;color:black;border:none;padding:12px 24px;border-radius:8px;font-weight:600;cursor:pointer;">Buscar</button>
             </div>
             <select class="loteria-prov-select" style="width:100%;padding:12px;border:1px solid #ddd;border-radius:8px;margin-bottom:20px;">
                 <option value="">Todas las provincias</option>
@@ -266,7 +262,7 @@ add_action('wp_footer', function() {
                 ];
                 let h = '';
                 p.forEach(i => {
-                    h += `<div style="padding:15px;margin:10px 0;border:1px solid #e0e0e0;border-left:4px solid #c5a059;border-radius:8px;display:grid;grid-template-columns:120px 1fr;gap:15px;align-items:center;">
+                    h += `<div style="padding:15px;margin:10px 0;border:1px solid #e0e0e0;border-left:4px solid #FFE032;border-radius:8px;display:grid;grid-template-columns:120px 1fr;gap:15px;align-items:center;">
                         <div><strong>${i.n}</strong><br><small style="color:#666;">${i.v}</small></div>
                         <div style="text-align:center;font-size:1.5rem;font-weight:700;font-family:monospace;">${i.d||'-----'}</div>
                     </div>`;
