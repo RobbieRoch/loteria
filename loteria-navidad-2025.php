@@ -57,7 +57,6 @@ class Loteria_Navidad_Plugin {
      */
     private function init_hooks() {
         add_action('init', array($this, 'flush_rewrite_rules_once'));
-        add_action('plugins_loaded', array($this, 'load_textdomain'));
     }
 
     /**
@@ -90,17 +89,6 @@ class Loteria_Navidad_Plugin {
             flush_rewrite_rules();
             update_option($option_name, true);
         }
-    }
-
-    /**
-     * Load plugin text domain
-     */
-    public function load_textdomain() {
-        load_plugin_textdomain(
-            'loteria-navidad',
-            false,
-            dirname(plugin_basename(__FILE__)) . '/languages'
-        );
     }
 }
 
