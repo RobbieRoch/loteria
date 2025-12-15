@@ -153,15 +153,119 @@
     border: 1px solid #ddd;
 }
 
-/* PEDREA */
-.loteria-pedrea-list {
-    max-height: 400px;
-    overflow-y: auto;
+.loteria-result-msg {
+    font-size: 1rem;
+    color: #333;
+    margin: 0;
+    font-family: Arial, sans-serif;
+}
+
+/* PEDREA - TABS */
+.loteria-tabs-grid {
     display: flex;
     flex-wrap: wrap;
-    gap: 8px;
-    justify-content: center;
-    padding-right: 5px;
+    gap: 5px;
+    margin-bottom: 20px;
+}
+
+.loteria-tab {
+    padding: 8px 12px;
+    border: 1px solid #ddd;
+    background: #fff;
+    cursor: pointer;
+    font-size: 0.8rem;
+    border-radius: 4px;
+    transition: all 0.2s;
+}
+
+.loteria-tab:hover {
+    background: #f5f5f5;
+}
+
+.loteria-tab.active {
+    background: #c41e3a;
+    color: #fff;
+    border-color: #c41e3a;
+}
+
+.loteria-pedrea-range-title h3 {
+    text-align: center;
+    margin: 15px 0;
+    font-size: 1.1rem;
+    color: #333;
+}
+
+/* PEDREA - SCROLL */
+.loteria-pedrea-scroll {
+    overflow-x: auto;
+    max-height: 500px;
+    overflow-y: auto;
+}
+
+/* PEDREA TABLE */
+.loteria-pedrea-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-family: Arial, sans-serif;
+    min-width: 600px;
+}
+
+.loteria-pedrea-table thead th {
+    background: #f8f9fa;
+    padding: 10px;
+    text-align: center;
+    border: 1px solid #ddd;
+    font-weight: bold;
+    position: sticky;
+    top: 0;
+    z-index: 1;
+}
+
+.loteria-pedrea-cell {
+    padding: 8px 5px;
+    text-align: center;
+    border: 1px solid #eee;
+    font-size: 0.85rem;
+    vertical-align: middle;
+}
+
+.loteria-pedrea-cell.empty {
+    color: #ccc;
+    background: #fafafa;
+}
+
+.loteria-pedrea-cell.filled {
+    background: #fff;
+}
+
+.pedrea-num {
+    font-weight: bold;
+    color: #333;
+    display: inline-block;
+    margin-right: 5px;
+}
+
+.pedrea-tipo {
+    color: #666;
+    font-size: 0.75rem;
+    margin-right: 5px;
+}
+
+.pedrea-premio {
+    font-weight: 600;
+}
+
+.pedrea-premio.premio-bajo {
+    color: #666;
+}
+
+.pedrea-premio.premio-medio {
+    color: #c41e3a;
+}
+
+.pedrea-premio.premio-alto {
+    color: #c41e3a;
+    font-weight: bold;
 }
 
 .loteria-pedrea-item {

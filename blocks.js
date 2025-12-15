@@ -1,45 +1,125 @@
-(function(blocks, element) {
-    var el = element.createElement;
-    var registerBlockType = blocks.registerBlockType;
+/**
+ * blocks.js - Loteria Navidad 2025 v7.6
+ * Registro de bloques Gutenberg con ServerSideRender
+ */
+(function() {
+    'use strict';
 
-    // ICONOS SVG (Simples)
-    var iconHorizontal = el('svg', { width: 24, height: 24, viewBox: '0 0 24 24' },
-        el('path', { d: 'M4 6h16v12H4z M2 4h20v16H2z M6 10h12v4H6z' })
-    );
-    var iconCheck = el('svg', { width: 24, height: 24, viewBox: '0 0 24 24' },
-        el('path', { d: 'M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z' })
-    );
+    var el = wp.element.createElement;
+    var registerBlockType = wp.blocks.registerBlockType;
+    var useBlockProps = wp.blockEditor.useBlockProps;
+    var ServerSideRender = wp.serverSideRender;
+
+    console.log('Loteria v7.6: Iniciando registro de bloques...');
+
+    // Placeholder para el editor cuando SSR no está disponible
+    function EditorPlaceholder(props) {
+        var blockProps = useBlockProps({
+            style: {
+                padding: '20px',
+                border: '2px dashed #FFE032',
+                background: '#fffbe6',
+                textAlign: 'center'
+            }
+        });
+        return el('div', blockProps,
+            el('strong', { style: { fontSize: '16px', display: 'block', marginBottom: '8px' } }, props.title),
+            el('p', { style: { margin: 0, fontSize: '12px', color: '#666' } }, props.description)
+        );
+    }
 
     // 1. BLOQUE HORIZONTAL
     registerBlockType('loteria/horizontal', {
-        title: 'Lotería: Premios Horizontal',
-        icon: iconHorizontal,
+        apiVersion: 2,
+        title: 'Loteria Horizontal',
+        description: 'Muestra los 5 premios principales en horizontal',
+        icon: 'awards',
         category: 'widgets',
-        keywords: ['loteria', 'navidad', 'premios', 'sorteo'],
-        description: 'Muestra la tira horizontal de premios (Gordo, 2º, etc.).',
+        keywords: ['loteria', 'navidad', 'sorteo', 'premios'],
+        supports: { html: false },
         edit: function() {
-            return el('div', { style: { padding: '20px', border: '2px dashed #FFE032', background: '#fffaf0', textAlign: 'center', color: '#333' } },
-                el('strong', { style: { display: 'block', marginBottom: '5px' } }, 'Lotería Navidad: Widget Horizontal'),
-                el('span', {}, 'Se mostrará aquí la tira de premios.')
-            );
+            if (ServerSideRender) {
+                return el('div', useBlockProps(),
+                    el(ServerSideRender, { block: 'loteria/horizontal' })
+                );
+            }
+            return el(EditorPlaceholder, {
+                title: 'Loteria: Premios Horizontal',
+                description: 'Tira de 5 premios principales'
+            });
         },
-        save: function() { return null; } // Rendered via PHP
+        save: function() { return null; }
     });
 
     // 2. BLOQUE COMPROBADOR
     registerBlockType('loteria/comprobador', {
-        title: 'Lotería: Comprobador',
-        icon: iconCheck,
+        apiVersion: 2,
+        title: 'Loteria Comprobador',
+        description: 'Formulario para comprobar numeros de loteria',
+        icon: 'search',
         category: 'widgets',
-        keywords: ['loteria', 'navidad', 'comprobador', 'decimo'],
-        description: 'Formulario para comprobar décimos.',
+        keywords: ['loteria', 'navidad', 'comprobador', 'comprobar'],
+        supports: { html: false },
         edit: function() {
-            return el('div', { style: { padding: '20px', border: '2px dashed #FFE032', background: '#fffaf0', textAlign: 'center', color: '#333' } },
-                el('strong', { style: { display: 'block', marginBottom: '5px' } }, 'Lotería Navidad: Comprobador'),
-                el('span', {}, 'Se mostrará aquí el formulario de comprobación.')
-            );
+            if (ServerSideRender) {
+                return el('div', useBlockProps(),
+                    el(ServerSideRender, { block: 'loteria/comprobador' })
+                );
+            }
+            return el(EditorPlaceholder, {
+                title: 'Loteria: Comprobador',
+                description: 'Formulario para comprobar numeros'
+            });
         },
-        save: function() { return null; } // Rendered via PHP
+        save: function() { return null; }
     });
 
-})(window.wp.blocks, window.wp.element);
+    // 3. BLOQUE PEDREA
+    registerBlockType('loteria/pedrea', {
+        apiVersion: 2,
+        title: 'Loteria Pedrea',
+        description: 'Tabla completa de la pedrea con pestanas',
+        icon: 'editor-table',
+        category: 'widgets',
+        keywords: ['loteria', 'navidad', 'pedrea', 'tabla'],
+        supports: { html: false },
+        edit: function() {
+            if (ServerSideRender) {
+                return el('div', useBlockProps(),
+                    el(ServerSideRender, { block: 'loteria/pedrea' })
+                );
+            }
+            return el(EditorPlaceholder, {
+                title: 'Loteria: Pedrea',
+                description: 'Tabla completa de numeros premiados'
+            });
+        },
+        save: function() { return null; }
+    });
+
+    // 4. BLOQUE PREMIOS
+    registerBlockType('loteria/premios', {
+        apiVersion: 2,
+        title: 'Loteria Premios',
+        description: 'Lista de los 5 premios principales',
+        icon: 'money-alt',
+        category: 'widgets',
+        keywords: ['loteria', 'navidad', 'premios', 'gordo'],
+        supports: { html: false },
+        edit: function() {
+            if (ServerSideRender) {
+                return el('div', useBlockProps(),
+                    el(ServerSideRender, { block: 'loteria/premios' })
+                );
+            }
+            return el(EditorPlaceholder, {
+                title: 'Loteria: Premios',
+                description: 'Lista de 5 premios principales'
+            });
+        },
+        save: function() { return null; }
+    });
+
+    console.log('Loteria v7.6: Bloques registrados OK');
+
+})();
