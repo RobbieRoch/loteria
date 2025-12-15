@@ -286,11 +286,11 @@
 }
 
 .loteria-box-horiz {
-    background: #fff;
-    border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-    padding: 15px;
-    border-top: 3px solid #FFE032;
+    background: linear-gradient(to bottom, #fafafa 0%, #ffffff 100%);
+    border-radius: 16px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+    padding: 30px 20px;
+    border: 1px solid #e8e8e8;
 }
 
 .loteria-scroll-container {
@@ -312,38 +312,59 @@
 
 .loteria-flex-row {
     display: flex;
-    gap: 15px;
-    min-width: max-content;
-    padding: 0 5px;
+    gap: 0;
+    padding: 0;
 }
 
 .loteria-item-horiz {
+    flex: 1;
     text-align: center;
-    padding: 0 15px;
-    border-right: 1px solid #eee;
-    min-width: 110px;
+    padding: 24px 20px;
+    position: relative;
+    transition: all 0.25s ease;
 }
 
-.loteria-item-horiz:last-child {
-    border-right: none;
+.loteria-item-horiz:not(:last-child)::after {
+    content: '';
+    position: absolute;
+    right: 0;
+    top: 20%;
+    height: 60%;
+    width: 1px;
+    background: linear-gradient(to bottom, transparent, #d0d0d0 20%, #d0d0d0 80%, transparent);
+}
+
+.loteria-item-horiz:hover {
+    background: rgba(255, 224, 50, 0.05);
 }
 
 .loteria-label-horiz {
-    font-size: 0.8rem;
-    color: #666;
+    font-size: 0.7rem;
+    color: #999;
     text-transform: uppercase;
-    font-weight: bold;
+    font-weight: 800;
+    letter-spacing: 1.2px;
+    margin-bottom: 12px;
+    display: block;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
 }
 
 .loteria-num-horiz {
-    font-family: monospace;
-    font-size: 1.6rem;
+    font-family: 'SF Mono', 'Monaco', 'Cascadia Code', 'Courier New', monospace;
+    font-size: 2.2rem;
     font-weight: 700;
-    color: #333;
-    margin: 4px 0;
+    color: #000;
+    margin: 16px 0;
+    letter-spacing: 3px;
+    display: block;
+    line-height: 1;
 }
 
 .loteria-prize-horiz {
-    font-size: 0.75rem;
-    color: #999;
+    font-size: 1rem;
+    color: #c41e3a;
+    font-weight: 700;
+    display: block;
+    margin-top: 12px;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
 }
