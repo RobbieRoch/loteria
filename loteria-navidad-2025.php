@@ -203,12 +203,12 @@ add_shortcode('loteria_iframe_horizontal', function() {
 
 // 4. GUTENBERG BLOCKS
 add_action('init', function() {
-    // Register JS for Editor
+    // Register JS for Editor (Simplified dependencies)
     wp_register_script(
         'loteria-navidad-blocks',
         plugins_url('blocks.js', __FILE__),
-        ['wp-blocks', 'wp-element', 'wp-components', 'wp-editor'],
-        '5.3'
+        ['wp-blocks', 'wp-element', 'wp-i18n', 'wp-editor'], // Added wp-i18n and wp-editor for safety
+        '5.4'
     );
 
     // Block 1: Horizontal
