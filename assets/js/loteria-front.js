@@ -1,11 +1,15 @@
 /**
  * loteria-front.js
- * 
- * Versión 7.1 - 5 Premios Principales
+ *
+ * Versión 7.8 - 5 Premios Principales
+ * Enhanced for Gutenberg editor preview
  */
 
-document.addEventListener('DOMContentLoaded', function() {
-    console.log('Loteria Navidad v7.0: Init');
+(function() {
+    'use strict';
+
+    function initLoteriaWidgets() {
+        console.log('Loteria Navidad v7.8: Init');
 
     const fmt = (n) => new Intl.NumberFormat('es-ES', {style:'currency', currency:'EUR'}).format(n);
 
@@ -312,4 +316,63 @@ document.addEventListener('DOMContentLoaded', function() {
             content.innerHTML = html;
         });
     });
-});
+    }
+
+    // Initialize on DOMContentLoaded for frontend
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initLoteriaWidgets);
+    } else {
+        // DOM already loaded (e.g., in Gutenberg editor)
+        initLoteriaWidgets();
+    }
+
+    // For Gutenberg editor: watch for DOM changes and re-initialize
+    if (window.wp && window.MutationObserver) {
+        var observer = new MutationObserver(function(mutations) {
+            var shouldInit = false;
+            mutations.forEach(function(mutation) {
+                if (mutation.addedNodes.length > 0) {
+                    mutation.addedNodes.forEach(function(node) {
+                        if (node.nodeType === 1) { // Element node
+                            // Check if added node is or contains a loteria widget
+                            if (node.classList && (
+                                node.classList.contains('loteria-widget') ||
+                                node.classList.contains('loteria-premios') ||
+                                node.classList.contains('loteria-comprobador') ||
+                                node.classList.contains('loteria-pedrea') ||
+                                node.classList.contains('loteria-premios-horiz')
+                            )) {
+                                shouldInit = true;
+                            } else if (node.querySelector && node.querySelector('.loteria-widget')) {
+                                shouldInit = true;
+                            }
+                        }
+                    });
+                }
+            });
+            if (shouldInit) {
+                console.log('Loteria: New widget detected, initializing...');
+                setTimeout(initLoteriaWidgets, 50);
+            }
+        });
+
+        // Start observing the document for changes
+        observer.observe(document.body, {
+            childList: true,
+            subtree: true
+        });
+
+        // Also use the data store subscription as backup
+        var lastBlockCount = 0;
+        window.wp.data.subscribe(function() {
+            var blocks = window.wp.data.select('core/block-editor').getBlocks();
+            if (blocks && blocks.length !== lastBlockCount) {
+                lastBlockCount = blocks.length;
+                setTimeout(initLoteriaWidgets, 200);
+            }
+        });
+    }
+
+    // Expose globally for manual initialization if needed
+    window.initLoteriaWidgets = initLoteriaWidgets;
+})();
