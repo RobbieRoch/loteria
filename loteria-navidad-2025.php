@@ -94,7 +94,7 @@ add_shortcode('loteria_premios', function() {
         <div style="text-align:center;margin-bottom:30px;">
             <h2 style="font-size:2rem;color:#1a1a1a;">Premios Principales</h2>
             <p style="color:#666;">Resultados del Sorteo de Navidad 2025</p>
-            <button class="loteria-btn-reload" style="background:#FFE032;border:none;color:black;padding:8px 16px;border-radius:8px;cursor:pointer;margin-top:10px;font-weight:600;">🔄 Actualizar</button>
+            <button class="loteria-btn-reload" style="background:#FFE032;border:none;color:black;padding:8px 16px;border-radius:8px;cursor:pointer;margin-top:10px;font-weight:600;">Actualizar</button>
         </div>
         <div class="loteria-content" style="background:#fff;border-radius:8px;box-shadow:0 4px 6px rgba(0,0,0,0.1);padding:30px;border-top:4px solid #FFE032;">
             <div class="loteria-loading">Cargando premios...</div>
@@ -114,7 +114,7 @@ add_shortcode('loteria_comprobador', function() {
         <div style="text-align:center;margin-bottom:30px;">
             <h2 style="font-size:2rem;color:#1a1a1a;">Comprobar Lotería</h2>
             <p style="color:#666;">Introduce tu número y el importe jugado</p>
-            <button class="loteria-btn-reload" style="background:#FFE032;border:none;color:black;padding:8px 16px;border-radius:8px;cursor:pointer;margin-top:10px;font-weight:600;">🔄 Actualizar</button>
+            <button class="loteria-btn-reload" style="background:#FFE032;border:none;color:black;padding:8px 16px;border-radius:8px;cursor:pointer;margin-top:10px;font-weight:600;">Actualizar</button>
         </div>
         <div style="background:#fff;border-radius:8px;box-shadow:0 4px 6px rgba(0,0,0,0.1);padding:30px;border-top:4px solid #FFE032;">
             <form class="loteria-form-check" style="display:flex;gap:15px;justify-content:center;flex-wrap:wrap;margin-bottom:20px;">
@@ -134,8 +134,48 @@ add_shortcode('loteria_comprobador', function() {
     <?php return ob_get_clean();
 });
 
-// Shortcode 3: [ELIMINADO] Buscar Número
-// Shortcode 4: [ELIMINADO] Administraciones Premiadas
+// Shortcode 3: Pedrea
+add_shortcode('loteria_pedrea', function() {
+    $uid = 'lot_' . md5(uniqid(rand(), true));
+    $api = loteria_navidad_get_api_v5('premios');
+
+    ob_start();
+    ?>
+    <div class="loteria-widget loteria-pedrea" data-api="<?php echo esc_attr($api); ?>" id="<?php echo $uid; ?>" style="margin:40px 0;font-family:Arial,sans-serif;clear:both;min-height:100px;">
+        <div style="text-align:center;margin-bottom:20px;">
+            <h2 style="font-size:2rem;color:#1a1a1a;">La Pedrea</h2>
+            <p style="color:#666;">Números premiados con 1.000€ a la serie</p>
+            <button class="loteria-btn-reload" style="background:#FFE032;border:none;color:black;padding:8px 16px;border-radius:8px;cursor:pointer;margin-top:10px;font-weight:600;">Actualizar</button>
+        </div>
+        <div style="background:#fff;border-radius:8px;box-shadow:0 4px 6px rgba(0,0,0,0.1);padding:20px;border-top:4px solid #FFE032;">
+            <div class="loteria-pedrea-list" style="max-height:400px;overflow-y:auto;display:flex;flex-wrap:wrap;gap:8px;justify-content:center;padding-right:5px;">
+                <p style="text-align:center;color:#666;width:100%;">Cargando pedrea...</p>
+            </div>
+        </div>
+    </div>
+    <?php return ob_get_clean();
+});
+
+// Shortcode 4: Premios Horizontal (Frontpage)
+add_shortcode('loteria_premios_horizontal', function() {
+    $uid = 'lot_' . md5(uniqid(rand(), true));
+    $api = loteria_navidad_get_api_v5('premios');
+    
+    ob_start();
+    ?>
+    <div class="loteria-widget loteria-premios-horiz" data-api="<?php echo esc_attr($api); ?>" id="<?php echo $uid; ?>" style="margin:20px 0;font-family:Arial,sans-serif;clear:both;">
+        <div style="background:#fff;border-radius:8px;box-shadow:0 2px 4px rgba(0,0,0,0.1);padding:15px;border-top:3px solid #FFE032;overflow-x:auto;">
+            <div class="loteria-content-horiz" style="display:flex;gap:15px;min-width:600px;justify-content:space-between;align-items:center;">
+                <div class="loteria-loading" style="text-align:center;width:100%;color:#666;">Cargando premios...</div>
+            </div>
+            <div style="text-align:center;margin-top:10px;">
+                 <button class="loteria-btn-reload" style="background:#f0f0f0;border:none;color:#333;padding:5px 10px;border-radius:4px;cursor:pointer;font-size:0.8rem;">Actualizar</button>
+            </div>
+        </div>
+    </div>
+    <?php return ob_get_clean();
+});
+
 // Shortcode 5: [ELIMINADO] Buscador Administraciones
 
 // 3. SINGLE UNIFIED JAVASCRIPT (WP_FOOTER)
@@ -248,6 +288,76 @@ add_action('wp_footer', function() {
                     res.innerHTML = `<p style="color:red;">Error: ${e.message}</p>`;
                 });
             });
+        });
+
+        // 3. PEDREA
+        document.querySelectorAll('.loteria-pedrea').forEach(w => {
+            const api = w.dataset.api;
+            const list = w.querySelector('.loteria-pedrea-list');
+            w.querySelector('.loteria-btn-reload').onclick = () => location.reload();
+            
+            fetch(api).then(r=>r.json()).then(d => {
+                if(d.error === 'DEBUG_MODE') return;
+                if(!d.compruebe || !Array.isArray(d.compruebe)) {
+                    list.innerHTML = '<p style="text-align:center;width:100%;">Información aún no disponible.</p>';
+                    return;
+                }
+                
+                // Filtrar Pedrea: Premios de 1.000€ a la serie (100.000 céntimos)
+                // Se ordenan numéricamente
+                const pedrea = d.compruebe
+                    .filter(i => parseInt(i.prize) === 100000)
+                    .map(i => i.decimo)
+                    .sort((a,b) => a - b);
+                
+                if(!pedrea.length) {
+                    list.innerHTML = '<p style="text-align:center;width:100%;">Aún no hay datos de pedrea.</p>';
+                    return;
+                }
+
+                let h = '';
+                pedrea.forEach(n => {
+                    h += `<span style="display:inline-block;padding:6px 10px;background:#f8f9fa;border:1px solid #eee;border-radius:4px;font-family:monospace;font-size:1.1rem;color:#333;font-weight:600;">${n}</span>`;
+                });
+                list.innerHTML = h;
+
+            }).catch(e => {
+                console.error(e);
+                list.innerHTML = `<p style="color:red;text-align:center;">Error al cargar pedrea.</p>`;
+            });
+        });
+
+        // 4. PREMIOS HORIZONTAL
+        document.querySelectorAll('.loteria-premios-horiz').forEach(w => {
+            const api = w.dataset.api;
+            const content = w.querySelector('.loteria-content-horiz');
+            w.querySelector('.loteria-btn-reload').onclick = () => location.reload();
+            
+            fetch(api).then(r=>r.json()).then(d => {
+                if(d.error === 'DEBUG_MODE') return;
+
+                const items = [
+                    {l:'Gordo', v:'4M€', k:'primerPremio'},
+                    {l:'2º', v:'1.25M€', k:'segundoPremio'},
+                    {l:'3º', v:'500k€', k:'tercerosPremios', i:0}
+                ];
+
+                let h = '';
+                items.forEach(it => {
+                    let num = '-----';
+                    if (d[it.k]) {
+                        const obj = (it.i !== undefined && Array.isArray(d[it.k])) ? d[it.k][it.i] : d[it.k];
+                        if (obj && obj.decimo) num = obj.decimo;
+                    }
+                    h += `<div style="text-align:center;padding:0 10px;border-right:1px solid #eee;flex:1;">
+                        <div style="font-size:0.8rem;color:#666;text-transform:uppercase;font-weight:bold;">${it.l}</div>
+                        <div style="font-family:monospace;font-size:1.4rem;font-weight:700;color:#333;margin:4px 0;">${num}</div>
+                        <div style="font-size:0.75rem;color:#999;">${it.v}</div>
+                    </div>`;
+                });
+                // Remove last border
+                content.innerHTML = h.replace(/border-right:1px solid #eee;flex:1;">(?=[^>]*$)/, 'flex:1;">');
+            }).catch(console.error);
         });
 
     });
