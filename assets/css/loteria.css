@@ -24,19 +24,21 @@
 }
 
 .loteria-btn-reload {
+    display: inline-block;
     background: #FFE032;
     border: none;
     color: black;
-    padding: 8px 16px;
+    padding: 8px 16px !important;
     border-radius: 8px;
     cursor: pointer;
     margin-top: 10px;
     font-weight: 600;
-    transition: opacity 0.2s;
+    transition: all 0.2s;
 }
 
 .loteria-btn-reload:hover {
-    opacity: 0.9;
+    color:  #FFE032 !important;
+    background: black !important;
 }
 
 .loteria-content {
@@ -526,8 +528,8 @@
     /* Smaller buttons */
     .loteria-btn-reload,
     .loteria-btn-check {
-        padding: 8px 12px;
-        font-size: 0.9rem;
+        padding: 8px 12px !important;
+        font-size: 0.9rem !important;
     }
 
     /* Reduce premio number size */

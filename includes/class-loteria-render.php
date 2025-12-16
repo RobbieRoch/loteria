@@ -121,6 +121,7 @@ class Loteria_Render {
                 </div>
                 <div style="text-align:center;">
                      <button class="loteria-btn-reload">Actualizar</button>
+                     <a class="loteria-btn-reload" href="https://theobjective.com/loterias/loteria-navidad/2025-12-10/comprobar-loteria-navidad-2025-premios/">Comprobar décimo</a>
                 </div>
             </div>
         </div>
